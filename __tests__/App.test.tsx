@@ -3,15 +3,25 @@
  */
 
 import 'react-native';
-import React from 'react';
-import App from '../App';
-
 // Note: import explicitly to use the types shipped with jest.
-import {it} from '@jest/globals';
+import {expect, it} from '@jest/globals';
 
 // Note: test renderer must be required after react-native.
-import renderer from 'react-test-renderer';
+import {PlayerA} from '../players/playera/PlayerA';
 
-it('renders correctly', () => {
-  renderer.create(<App />);
+const playerA = new PlayerA();
+
+it('not on the same row', () => {
+  const result = playerA.isHeadAndTailOnTheSameRow(27, 32);
+  expect(result).toBe(false);
+});
+
+it(' on the same row', () => {
+  const result = playerA.isHeadAndTailOnTheSameRow(22, 27);
+  expect(result).toBe(true);
+});
+
+it('not on the same row', () => {
+  const result = playerA.isHeadAndTailOnTheSameRow(10, 15);
+  expect(result).toBe(false);
 });
