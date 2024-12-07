@@ -6,12 +6,26 @@ import {
   ShipsAndOpponentsShot,
 } from './players/playera/PlayerA';
 import {FlatList, StyleSheet, Text, View} from 'react-native';
+import {PlayerB, ShotState} from './players/playerb/PlayerB';
 
 function App(): React.JSX.Element {
   const [list, setList] = useState<ShipsAndOpponentsShot[]>(new Array(100));
   useEffect(() => {
     const playerA = new PlayerA();
+    const playerB = new PlayerB();
+
     playerA.positionShips();
+
+    const shotCellNumber = playerB.announceShot();
+    const shotStatus = playerA.opponentShottedStatus(shotCellNumber);
+
+    playerB.announcedShots[shotCellNumber - 1] = {
+      position: shotCellNumber - 1,
+      shot: shotStatus,
+    };
+
+    console.log({shotStatus: playerB.announcedShots[shotCellNumber - 1]});
+
     setList(playerA.shipsAndOpponentsShotList);
   }, []);
 
@@ -21,20 +35,32 @@ function App(): React.JSX.Element {
       numColumns={10}
       renderItem={({item}) => (
         <View>
-          <Text style={cellStyle(item ? item.ship.name : '', 20)}>
-            {item ? item.ship.name : ''}
-          </Text>
+          <Text style={cellStyle(item, 20)}>{item ? textShow(item) : ''}</Text>
         </View>
       )}
     />
   );
 }
 
-function cellStyle(name: string, cellSize: number) {
-  const backgroundColor = getShipColorByName(name);
+function textShow(item: ShipsAndOpponentsShot) {
+  switch (item.opponentShotState) {
+    case ShotState.Hit:
+      return 'X';
+    case ShotState.Miss:
+      return '.';
+    case ShotState.Undefine:
+      return '';
+  }
+}
+
+function cellStyle(item: ShipsAndOpponentsShot, cellSize: number) {
+  const backgroundColor = getShipColorByName(item ? item.ship.name : '');
   return {
     height: cellSize,
     width: cellSize,
+    textAlign: 'center',
+    fontSize: 15,
+    fontWeight: 'bold',
     backgroundColor: backgroundColor,
     borderWidth: 1,
   };
@@ -42,8 +68,8 @@ function cellStyle(name: string, cellSize: number) {
 
 const styles = StyleSheet.create({
   cell: {
-    height: 45,
-    width: 45,
+    height: 60,
+    width: 60,
     borderWidth: 1,
   },
 });

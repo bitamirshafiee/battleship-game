@@ -10,16 +10,18 @@ export class PlayerB {
   }
   //public for the sake of testing
   public checkIfThisShotHasBeenMadeBefore(shotNumber: number) {
+    console.log({size: this.announcedShots.length});
     return this.announcedShots[shotNumber - 1]
       ? this.announceShot()
-      : shotNumber - 1;
+      : shotNumber;
   }
 }
 
 export type AnnouncedShots = {position: number; shot: Shot};
-export type Shot = {state: ShotState; shipName: string};
+export type Shot = {state: ShotState; shipName?: string};
 
 export enum ShotState {
-  Hit,
-  Miss,
+  Hit = 'Hit',
+  Miss = 'Miss',
+  Undefine = '',
 }

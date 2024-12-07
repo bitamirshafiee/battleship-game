@@ -1,9 +1,9 @@
 import {getRandomNumber} from '../../utils/Helper';
+import {Shot, ShotState} from '../playerb/PlayerB';
 
 export class PlayerA {
   public shipsAndOpponentsShotList: ShipsAndOpponentsShot[] = new Array(100);
   public positionShips() {
-    console.log(this.shipsAndOpponentsShotList);
     ships.forEach(ship => {
       this.arrangeShipHorizontally(ship);
       // const shipDirectionHorizontalOrVertical = getRandomNumber(
@@ -24,8 +24,9 @@ export class PlayerA {
     if (shipTail <= 100) {
       if (this.isCellOccupied(shipHead, shipTail)) {
         if (this.isHeadAndTailOnTheSameRow(shipHead, shipTail)) {
+          // TODO fill or =
           this.shipsAndOpponentsShotList?.fill(
-            {ship: ship, opponentShot: ''},
+            {ship: ship, opponentShotState: ShotState.Undefine},
             shipHead - 1,
             shipTail - 1,
           );
@@ -43,13 +44,8 @@ export class PlayerA {
       head - 1,
       tail - 1,
     );
-    console.log(desiredCellsToBeOccupied);
-
     const result = desiredCellsToBeOccupied.every(v => {
       v.ship.name.length == 0;
-    });
-    console.log({
-      every: result,
     });
     return result;
   }
@@ -63,6 +59,23 @@ export class PlayerA {
   public isBetween(min: number, max: number, value: number) {
     if (value >= min && value <= max) return true;
     else return false;
+  }
+
+  public opponentShottedStatus(shotNumber: number): Shot {
+    const opponentShottedCell = this.shipsAndOpponentsShotList[shotNumber - 1];
+    const shot = opponentShottedCell
+      ? {state: ShotState.Hit, shipName: opponentShottedCell.ship.name}
+      : {state: ShotState.Miss};
+
+    this.shipsAndOpponentsShotList[shotNumber - 1] = {
+      ship: opponentShottedCell
+        ? opponentShottedCell.ship
+        : {name: '', length: 0},
+      opponentShotState: shot.state,
+    };
+
+    console.log(this.shipsAndOpponentsShotList);
+    return shot;
   }
 }
 
@@ -89,4 +102,4 @@ enum ShipDirection {
   Vertical = 2,
 }
 
-export type ShipsAndOpponentsShot = {ship: Ship; opponentShot: ''};
+export type ShipsAndOpponentsShot = {ship: Ship; opponentShotState: ShotState};
