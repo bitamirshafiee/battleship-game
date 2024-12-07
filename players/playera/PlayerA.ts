@@ -3,6 +3,7 @@ import {getRandomNumber} from '../../utils/Helper';
 export class PlayerA {
   public shipsAndOpponentsShotList: ShipsAndOpponentsShot[] = new Array(100);
   public positionShips() {
+    console.log(this.shipsAndOpponentsShotList);
     ships.forEach(ship => {
       this.arrangeShipHorizontally(ship);
       // const shipDirectionHorizontalOrVertical = getRandomNumber(

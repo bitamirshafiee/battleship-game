@@ -8,11 +8,11 @@ import {
 import {FlatList, StyleSheet, Text, View} from 'react-native';
 
 function App(): React.JSX.Element {
-  const [list, setList1] = useState<ShipsAndOpponentsShot[]>(new Array(100));
+  const [list, setList] = useState<ShipsAndOpponentsShot[]>(new Array(100));
   useEffect(() => {
     const playerA = new PlayerA();
     playerA.positionShips();
-    setList1(playerA.shipsAndOpponentsShotList);
+    setList(playerA.shipsAndOpponentsShotList);
   }, []);
 
   return (
