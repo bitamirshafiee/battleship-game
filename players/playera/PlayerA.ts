@@ -1,9 +1,16 @@
 import {getRandomNumber} from '../../utils/Helper';
 import {Shot, ShotState} from '../playerb/PlayerB';
 
+export type PlayerAObject = {
+  id: number;
+  shipsAndOpponentsShot: ShipsAndOpponentsShot;
+};
 export class PlayerA {
   public shipsAndOpponentsShotList: ShipsAndOpponentsShot[] = new Array(100);
   public positionShips() {
+    // for( let i = 0 ; i< 100; i++){
+    //   shipsAndOpponentsShotList[i] =
+    // }
     ships.forEach(ship => {
       this.arrangeShipHorizontally(ship);
       // const shipDirectionHorizontalOrVertical = getRandomNumber(
@@ -73,8 +80,6 @@ export class PlayerA {
         : {name: '', length: 0},
       opponentShotState: shot.state,
     };
-
-    console.log(this.shipsAndOpponentsShotList);
     return shot;
   }
 }

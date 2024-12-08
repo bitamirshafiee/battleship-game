@@ -10,7 +10,6 @@ export class PlayerB {
   }
   //public for the sake of testing
   public checkIfThisShotHasBeenMadeBefore(shotNumber: number) {
-    console.log({size: this.announcedShots.length});
     return this.announcedShots[shotNumber - 1]
       ? this.announceShot()
       : shotNumber;
