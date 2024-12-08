@@ -1,17 +1,19 @@
-import {getRandomNumber} from '../../utils/Helper';
-import {Shot, ShotState} from '../playerb/PlayerB';
+import {getRandomNumber} from '../utils/Helper';
+import {
+  AnnouncedShots,
+  getShips,
+  Ship,
+  ShipsAndOpponentsShot,
+  Shot,
+  ShotState,
+} from './Model';
 
-export type PlayerAObject = {
-  id: number;
-  shipsAndOpponentsShot: ShipsAndOpponentsShot;
-};
-export class PlayerA {
+export class Player {
   public shipsAndOpponentsShotList: ShipsAndOpponentsShot[] = new Array(100);
+  public announcedShots: AnnouncedShots[] = new Array(100);
+
   public positionShips() {
-    // for( let i = 0 ; i< 100; i++){
-    //   shipsAndOpponentsShotList[i] =
-    // }
-    ships.forEach(ship => {
+    getShips().forEach(ship => {
       this.arrangeShipHorizontally(ship);
       // const shipDirectionHorizontalOrVertical = getRandomNumber(
       //   ShipDirection.Horizontal,
@@ -24,7 +26,7 @@ export class PlayerA {
     });
   }
 
-  public arrangeShipHorizontally(ship: Ship) {
+  arrangeShipHorizontally(ship: Ship) {
     const shipHead = getRandomNumber(1, 100);
     const shipTail = shipHead + ship.length;
 
@@ -82,29 +84,16 @@ export class PlayerA {
     };
     return shot;
   }
+
+  public announceShot(): number {
+    const shotNumber = getRandomNumber(1, 100);
+    const result = this.checkIfThisShotHasBeenMadeBefore(shotNumber);
+    return result;
+  }
+  //public for the sake of testing
+  public checkIfThisShotHasBeenMadeBefore(shotNumber: number) {
+    return this.announcedShots[shotNumber - 1]
+      ? this.announceShot()
+      : shotNumber;
+  }
 }
-
-export enum ShipName {
-  Carrier = 'Carrier',
-  Battleship = 'Battleship',
-  Cruiser = 'Cruiser',
-  Submarine = 'Submarine',
-  Destroyer = 'Destroyer',
-}
-
-export type Ship = {name: string; length: number};
-
-const ships = [
-  {name: ShipName.Carrier, length: 5},
-  {name: ShipName.Battleship, length: 4},
-  {name: ShipName.Cruiser, length: 3},
-  {name: ShipName.Submarine, length: 3},
-  {name: ShipName.Destroyer, length: 3},
-];
-
-enum ShipDirection {
-  Horizontal = 1,
-  Vertical = 2,
-}
-
-export type ShipsAndOpponentsShot = {ship: Ship; opponentShotState: ShotState};

@@ -1,11 +1,6 @@
 import React, {useRef} from 'react';
 import {useEffect, useState} from 'react';
 import {
-  PlayerA,
-  ShipName,
-  ShipsAndOpponentsShot,
-} from './players/playera/PlayerA';
-import {
   Alert,
   FlatList,
   StyleSheet,
@@ -13,11 +8,12 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import {PlayerB, ShotState} from './players/playerb/PlayerB';
 import {ResultChecker} from './players/ResultChecker';
+import {ShipName, ShipsAndOpponentsShot, ShotState} from './players/Model';
+import {Player} from './players/Player';
 
-const playerA = new PlayerA();
-const playerB = new PlayerB();
+const playerA = new Player();
+const playerB = new Player();
 const resultChecker = new ResultChecker();
 
 function App(): React.JSX.Element {
