@@ -1,6 +1,7 @@
 import {getRandomNumber} from '../utils/Helper';
 import {
   AnnouncedShots,
+  GamePlayer,
   getShips,
   Ship,
   ShipsAndOpponentsShot,
