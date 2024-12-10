@@ -1,13 +1,6 @@
 import React, {useRef} from 'react';
 import {useEffect, useState} from 'react';
-import {
-  Alert,
-  FlatList,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
+import {Alert, FlatList, StyleSheet, Text, View} from 'react-native';
 import {ResultChecker} from './players/ResultChecker';
 import {
   GamePlayer,
@@ -15,12 +8,9 @@ import {
   ShipsAndOpponentsShot,
   ShotState,
 } from './players/Model';
-import {Player} from './players/Player';
-import {getRandomNumber} from './utils/Helper';
+import {GameController} from './players/GameController';
 
-const playerA = new Player();
-const playerB = new Player();
-const resultChecker = new ResultChecker();
+const controller = new GameController();
 
 function App(): React.JSX.Element {
   const [listA, setListA] = useState<ShipsAndOpponentsShot[]>(new Array(100));
@@ -28,78 +18,20 @@ function App(): React.JSX.Element {
   const [starterPlayer, setStarterPlayer] = useState<number>();
   const [message, setMessage] = useState<string>('Lets Start');
 
-  const delayTime = 100;
+  const delayTime = 1000;
 
   let interval: any = null;
 
   const [gameResultA, setGameResultA] = useState<boolean>(false);
   const [gameResultB, setGameResultB] = useState<boolean>(false);
 
-  const playerBshot = () => {
-    const shotCellNumber = playerB.announceShot();
-    const shotStatus = playerA.opponentShottedStatus(shotCellNumber);
-
-    playerB.announcedShots[shotCellNumber - 1] = {
-      position: shotCellNumber - 1,
-      shot: shotStatus,
-    };
-
-    const result = resultChecker.checkSuccessStatus(shotStatus.shipName);
-    if (result) clearInterval(interval);
-
-    setGameResultB(result);
-    console.log({gameResult: gameResultB, result: result});
-
-    setListB(playerB.shipsAndOpponentsShotList);
-    console.log(listA);
-    // await delay(1000);
-  };
-
-  const playerAshot = () => {
-    const shotCellNumber = playerA.announceShot();
-    const shotStatus = playerB.opponentShottedStatus(shotCellNumber);
-
-    playerA.announcedShots[shotCellNumber - 1] = {
-      position: shotCellNumber - 1,
-      shot: shotStatus,
-    };
-
-    const result = resultChecker.checkSuccessStatus(shotStatus.shipName);
-    if (result) clearInterval(interval);
-
-    setGameResultA(result);
-    console.log({gameResult: gameResultA, result: result});
-
-    setListA(playerA.shipsAndOpponentsShotList);
-    console.log(listA);
-    // await delay(1000);
-  };
-
-  const attack = () => {
-    interval = setInterval(() => {
-      playerAshot();
-      playerBshot();
-    }, 100);
-  };
-  // const sleep = (ms: number): Promise<void> =>
-  //   new Promise(r => setTimeout(r, ms));
-
-  // const bbb = async () => {
-  //   for (let i = 0; i < 100; i++) {
-  //     onHandlePress();
-
-  //     await sleep(100);
-  //   }
-  // };
-
   const playerAPositionTheShips = async () => {
     await setTimeoutPromise(
       () => setMessage('player A PositionTheShips'),
       delayTime,
     );
-    await setTimeoutPromise(() => playerA.positionShips(), delayTime);
     await setTimeoutPromise(
-      () => setListA(playerA.shipsAndOpponentsShotList),
+      () => setListA(controller.playerAPositionTheShips()),
       delayTime,
     );
   };
@@ -109,64 +41,56 @@ function App(): React.JSX.Element {
       () => setMessage('player B PositionTheShips'),
       delayTime,
     );
-    await setTimeoutPromise(() => playerB.positionShips(), delayTime);
     await setTimeoutPromise(
-      () => setListB(playerB.shipsAndOpponentsShotList),
+      () => setListB(controller.playerBPositionTheShips()),
       delayTime,
     );
   };
 
-  const whichPlayerToStart = async () => {
-    await setTimeoutPromise(
-      () => setMessage('Which player to start'),
-      delayTime,
-    );
+  const playerAshot = () => {
+    const status = controller.playerAStartAttack();
+    console.log(status.score);
 
-    await setTimeoutPromise(() => {
-      console.log('result');
-      const result = getRandomNumber(0, 1);
-      if (result == 0) setMessage('Player A will start');
-      else setMessage('Player B will start');
-      setStarterPlayer(result);
+    if (status.gameResult) clearInterval(interval);
+
+    setListB(list => {
+      return [...(list = status.playerBBoard)];
+    });
+  };
+
+  const playerBshot = () => {
+    const status = controller.playerBStartAttack();
+
+    console.log(status.score);
+
+    if (status.gameResult) clearInterval(interval);
+
+    setListA(list => {
+      return [...(list = status.playerABoard)];
+    });
+  };
+
+  const attack = () => {
+    let toggle = false;
+    const whichPlayerToStart = controller.whichPlayerStart();
+
+    if (whichPlayerToStart == GamePlayer.A) {
+      toggle = true;
+      setMessage('Player A will start');
+    } else {
+      toggle = false;
+      setMessage('Player B will start');
+    }
+
+    interval = setInterval(() => {
+      toggle ? playerAshot() : playerBshot();
+      toggle = !toggle;
     }, delayTime);
   };
 
   useEffect(() => {
-    playerAPositionTheShips()
-      .then(playerBPositionTheShips)
-      .then(whichPlayerToStart)
-      .then(playerBshot);
-
-    attack();
-
-    // while (!gameResultA && !gameResultB) {
-    //   playerBshot();
-    //   playerAshot();
-    // }
+    playerAPositionTheShips().then(playerBPositionTheShips).then(attack);
   }, []);
-
-  // setTimeout(() => onHandlePress(), 1000);
-
-  // useEffect(() => {
-  //   ///https://stackoverflow.com/questions/65049812/how-to-call-a-function-every-minute-in-a-react-componen
-  //   const interval = setInterval(() => {
-  //     const shotCellNumber = playerB.announceShot();
-  //     const shotStatus = playerA.opponentShottedStatus(shotCellNumber);
-
-  //     playerB.announcedShots[shotCellNumber - 1] = {
-  //       position: shotCellNumber - 1,
-  //       shot: shotStatus,
-  //     };
-
-  //     setListA(playerA.shipsAndOpponentsShotList);
-  //     console.log(listA);
-
-  //     const result = resultChecker.checkSuccessStatus(shotStatus.shipName);
-  //     setGameResult(result);
-  //     console.log({gameResult: gameResult, result: result});
-  //     if (result) clearInterval(interval);
-  //   }, 100);
-  // }, []);
 
   return (
     <View>
@@ -181,7 +105,7 @@ function App(): React.JSX.Element {
             </Text>
           </View>
         )}
-        keyExtractor={(item, index) => index.toString()}
+        keyExtractor={(item, index) => 'key' + index.toString()}
       />
 
       <Text> {message}</Text>
@@ -198,40 +122,17 @@ function App(): React.JSX.Element {
             </Text>
           </View>
         )}
-        keyExtractor={(item, index) => index.toString()}
+        keyExtractor={(item, index) => 'key' + index.toString()}
       />
-
-      {/* <TouchableOpacity style={styles.button} onPress={onHandlePress}>
-        <Text>Submit</Text>
-      </TouchableOpacity> */}
     </View>
   );
 }
+
 async function delay(ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 function setTimeoutPromise(callback: () => void, ms: number) {
   return new Promise(resolve => setTimeout(resolve, ms)).then(callback);
-}
-
-function useInterval(callback: () => void, delay: number | null): void {
-  const savedCallback = useRef<(() => void) | undefined>();
-
-  useEffect(() => {
-    savedCallback.current = callback;
-  }, [callback]);
-
-  useEffect(() => {
-    function tick(): void {
-      if (savedCallback.current) {
-        savedCallback.current();
-      }
-    }
-    if (delay !== null) {
-      const id: NodeJS.Timeout = setInterval(tick, delay);
-      return () => clearInterval(id);
-    }
-  }, [delay]);
 }
 
 function textShow(item: ShipsAndOpponentsShot) {

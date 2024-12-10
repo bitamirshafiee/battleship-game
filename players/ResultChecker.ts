@@ -18,8 +18,6 @@ export class ResultChecker {
   }
 
   checkIfAllShipsDrawn(shipName: string): boolean {
-    console.log({shipName: shipName});
-
     switch (shipName) {
       case ShipName.Carrier: {
         this.carrierShots++;
@@ -54,7 +52,6 @@ export class ResultChecker {
       this.isSubmarineDrawn,
       this.isDestroyerDrawn,
     ];
-    console.log(list);
     return [
       this.isCarrierDrawn,
       this.isBattleShipDrawn,

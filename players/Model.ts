@@ -32,3 +32,8 @@ export enum ShotState {
 }
 
 export type ShipsAndOpponentsShot = {ship: Ship; opponentShotState: ShotState};
+
+export enum GamePlayer {
+  A,
+  B,
+}
