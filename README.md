@@ -1,79 +1,36 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+# Battleship Game
+This is a Battleship, which you can see the rules [here](https://en.wikipedia.org/wiki/Battleship_(game)).
 
-# Getting Started
+## Game Description
+In this game two players, A and B play the game against each other using a random number attacking the opponents board. Each step is being explained by a proper message and the players score is being shown too.
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+This is the flow:
+- Each player positioning the ships.
+- A player will be randomly chosen to start the game.
+- Players start attacking each other's board. You can see a 'Hit' shot with a cross(X) and a 'Missed' shot with a dot (.) , This step will be continued until a player wins. 
+- A proper message will be shown that which player has won.
 
-## Step 1: Start the Metro Server
+## How to use it
 
-First, you will need to start **Metro**, the JavaScript _bundler_ that ships _with_ React Native.
+This is the preview of the game :
 
-To start Metro, run the following command from the _root_ of your React Native project:
+<img src = "https://github.com/user-attachments/assets/2baecb9d-782a-4c78-ad86-f5880148516d" with = "300" height = "600">
 
-```bash
-# using npm
-npm start
 
-# OR using Yarn
-yarn start
-```
+- Each attack is being done in a timer of one second you can change **delayTime** in the **App.tsx** file to your favorite delay time.
+- If the cells of the board are small you can change the size in **App.tsx** file in **cellStyle** functuion.
+- I tried to explain the functions by their names so you can go throught it easier.
 
-## Step 2: Start your Application
+## Future Todos
 
-Let Metro Bundler run in its _own_ terminal. Open a _new_ terminal from the _root_ of your React Native project. Run the following command to start your _Android_ or _iOS_ app:
+Things I would like to do: 
 
-### For Android
+- Creating a separate screen for game view, put it in the game package, use the controller for this view instead of using the controller for **App.tsx** and add a stack navigator.
+- Use a factory pattern to create the controller at startup in **App.tsx**
+- Right now the ships are just positioning horizontally, I have conmmented in the **Player** file that it can be vertically too. The logic will be randomly select to position the ships vertically or horizontally and then positioning them. for the sake of vertical positioning, we choose a random number and select a cell whether on top or below of the selected cell(it should be a multiply of 10).
+- We can make the players smarter, after choosing a random number from 1 to 100 to attack, we can check if it is a hit or not, if it is a hit we can write a code to start hiting around the hitted cell.
+- Tests has been written for some functions, and there could be more tests be written for forexample the result checker or UI.
 
-```bash
-# using npm
-npm run android
 
-# OR using Yarn
-yarn android
-```
 
-### For iOS
 
-```bash
-# using npm
-npm run ios
-
-# OR using Yarn
-yarn ios
-```
-
-If everything is set up _correctly_, you should see your new app running in your _Android Emulator_ or _iOS Simulator_ shortly provided you have set up your emulator/simulator correctly.
-
-This is one way to run your app — you can also run it directly from within Android Studio and Xcode respectively.
-
-## Step 3: Modifying your App
-
-Now that you have successfully run the app, let's modify it.
-
-1. Open `App.tsx` in your text editor of choice and edit some lines.
-2. For **Android**: Press the <kbd>R</kbd> key twice or select **"Reload"** from the **Developer Menu** (<kbd>Ctrl</kbd> + <kbd>M</kbd> (on Window and Linux) or <kbd>Cmd ⌘</kbd> + <kbd>M</kbd> (on macOS)) to see your changes!
-
-   For **iOS**: Hit <kbd>Cmd ⌘</kbd> + <kbd>R</kbd> in your iOS Simulator to reload the app and see your changes!
-
-## Congratulations! :tada:
-
-You've successfully run and modified your React Native App. :partying_face:
-
-### Now what?
-
-- If you want to add this new React Native code to an existing application, check out the [Integration guide](https://reactnative.dev/docs/integration-with-existing-apps).
-- If you're curious to learn more about React Native, check out the [Introduction to React Native](https://reactnative.dev/docs/getting-started).
-
-# Troubleshooting
-
-If you can't get this to work, see the [Troubleshooting](https://reactnative.dev/docs/troubleshooting) page.
-
-# Learn More
-
-To learn more about React Native, take a look at the following resources:
-
-- [React Native Website](https://reactnative.dev) - learn more about React Native.
-- [Getting Started](https://reactnative.dev/docs/environment-setup) - an **overview** of React Native and how setup your environment.
-- [Learn the Basics](https://reactnative.dev/docs/getting-started) - a **guided tour** of the React Native **basics**.
-- [Blog](https://reactnative.dev/blog) - read the latest official React Native **Blog** posts.
-- [`@facebook/react-native`](https://github.com/facebook/react-native) - the Open Source; GitHub **repository** for React Native.
