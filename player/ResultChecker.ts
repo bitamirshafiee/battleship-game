@@ -1,4 +1,4 @@
-import {ShipName} from './Model';
+import {ShipName} from './Models';
 
 export class ResultChecker {
   private carrierShots = 0;

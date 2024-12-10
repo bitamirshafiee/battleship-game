@@ -1,13 +1,12 @@
 import {getRandomNumber} from '../utils/Helper';
 import {
   AnnouncedShots,
-  GamePlayer,
   getShips,
   Ship,
   ShipsAndOpponentsShot,
   Shot,
   ShotState,
-} from './Model';
+} from './Models';
 
 export class Player {
   public shipsAndOpponentsShotList: ShipsAndOpponentsShot[] = new Array(100);
@@ -16,14 +15,11 @@ export class Player {
   public positionShips() {
     getShips().forEach(ship => {
       this.arrangeShipHorizontally(ship);
-      // const shipDirectionHorizontalOrVertical = getRandomNumber(
-      //   ShipDirection.Horizontal,
-      //   ShipDirection.Vertical,
-      // );
-      // if (shipDirectionHorizontalOrVertical == ShipDirection.Horizontal) {
-      //   this.arrangeShipHorizontally(ship);
-      // } else if (shipDirectionHorizontalOrVertical == ShipDirection.Vertical) {
-      // }
+      /*if (shipDirectionHorizontalOrVertical == ShipDirection.Horizontal) {
+        this.arrangeShipHorizontally(ship);
+      } else if (shipDirectionHorizontalOrVertical == ShipDirection.Vertical) {
+        this.arrangeShipVertically(ship);
+      }*/
     });
   }
 
@@ -34,7 +30,6 @@ export class Player {
     if (shipTail <= 100) {
       if (this.isCellOccupied(shipHead, shipTail)) {
         if (this.isHeadAndTailOnTheSameRow(shipHead, shipTail)) {
-          // TODO fill or =
           this.shipsAndOpponentsShotList?.fill(
             {ship: ship, opponentShotState: ShotState.Undefine},
             shipHead - 1,
@@ -63,11 +58,6 @@ export class Player {
   public isHeadAndTailOnTheSameRow(head: number, tail: number) {
     const d = Math.floor((head - 1) / 10);
     if (tail - 1 <= (d + 1) * 10) return true;
-    else return false;
-  }
-
-  public isBetween(min: number, max: number, value: number) {
-    if (value >= min && value <= max) return true;
     else return false;
   }
 

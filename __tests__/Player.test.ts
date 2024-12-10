@@ -1,7 +1,7 @@
 import 'react-native';
 import {expect, it} from '@jest/globals';
-import {Player} from '../players/Player';
-import {ShipName, ShotState} from '../players/Model';
+import {Player} from '../player/Player';
+import {ShipName, ShotState} from '../player/Models';
 
 const player = new Player();
 

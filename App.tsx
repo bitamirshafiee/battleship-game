@@ -1,33 +1,24 @@
-import React, {useRef} from 'react';
+import React from 'react';
 import {useEffect, useState} from 'react';
-import {Alert, FlatList, StyleSheet, Text, View} from 'react-native';
-import {ResultChecker} from './players/ResultChecker';
-import {
-  GamePlayer,
-  ShipName,
-  ShipsAndOpponentsShot,
-  ShotState,
-} from './players/Model';
-import {GameController} from './players/GameController';
+import {FlatList, SafeAreaView, StyleSheet, Text, View} from 'react-native';
+import {GamePlayer, ShipsAndOpponentsShot, ShotState} from './player/Models';
+import {GameController} from './game/GameController';
+import {getShipColorByName, setTimeoutPromise} from './utils/Helper';
 
 const controller = new GameController();
 
 function App(): React.JSX.Element {
   const [listA, setListA] = useState<ShipsAndOpponentsShot[]>(new Array(100));
   const [listB, setListB] = useState<ShipsAndOpponentsShot[]>(new Array(100));
-  const [starterPlayer, setStarterPlayer] = useState<number>();
   const [message, setMessage] = useState<string>('Lets Start');
-
+  const [playerAScore, setPlayerAScore] = useState<number>(0);
+  const [playerBScore, sePlayerBScore] = useState<number>(0);
   const delayTime = 1000;
-
   let interval: any = null;
-
-  const [gameResultA, setGameResultA] = useState<boolean>(false);
-  const [gameResultB, setGameResultB] = useState<boolean>(false);
 
   const playerAPositionTheShips = async () => {
     await setTimeoutPromise(
-      () => setMessage('player A PositionTheShips'),
+      () => setMessage('player A position The Ships'),
       delayTime,
     );
     await setTimeoutPromise(
@@ -47,26 +38,35 @@ function App(): React.JSX.Element {
     );
   };
 
-  const playerAshot = () => {
+  const playerAAttack = () => {
+    setMessage('player A Attack!');
+
     const status = controller.playerAStartAttack();
-    console.log(status.score);
+    setPlayerAScore(status.score);
 
-    if (status.gameResult) clearInterval(interval);
+    if (status.gameResult) {
+      clearInterval(interval);
+      setMessage('Player A you won!!!!');
+    }
 
-    setListB(list => {
-      return [...(list = status.playerBBoard)];
+    setListB(() => {
+      return [...status.playerBBoard];
     });
   };
 
-  const playerBshot = () => {
+  const playerBAttack = () => {
+    setMessage('player B Attack!');
     const status = controller.playerBStartAttack();
 
-    console.log(status.score);
+    sePlayerBScore(status.score);
 
-    if (status.gameResult) clearInterval(interval);
+    if (status.gameResult) {
+      clearInterval(interval);
+      setMessage('Player B you won!!!!');
+    }
 
-    setListA(list => {
-      return [...(list = status.playerABoard)];
+    setListA(() => {
+      return [...status.playerABoard];
     });
   };
 
@@ -83,7 +83,7 @@ function App(): React.JSX.Element {
     }
 
     interval = setInterval(() => {
-      toggle ? playerAshot() : playerBshot();
+      toggle ? playerAAttack() : playerBAttack();
       toggle = !toggle;
     }, delayTime);
   };
@@ -93,57 +93,38 @@ function App(): React.JSX.Element {
   }, []);
 
   return (
-    <View>
+    <SafeAreaView style={styles.container}>
+      <Text style={styles.titleText}> Player A - score : {playerAScore} </Text>
       <FlatList
         data={listA}
         numColumns={10}
-        extraData={listA}
         renderItem={({item}) => (
           <View>
-            <Text style={cellStyle(item, 20)}>
+            <Text style={cellStyle(item, 22)}>
               {item ? textShow(item) : ''}
             </Text>
           </View>
         )}
-        keyExtractor={(item, index) => 'key' + index.toString()}
+        keyExtractor={(_item, index) => 'key' + index.toString()}
       />
 
-      <Text> {message}</Text>
+      <Text style={styles.boardMessage}> {message}</Text>
 
+      <Text style={styles.titleText}> Player B - score : {playerBScore}</Text>
       <FlatList
-        style={styles.grid}
         data={listB}
         numColumns={10}
-        extraData={listB}
         renderItem={({item}) => (
           <View>
-            <Text style={cellStyle(item, 20)}>
+            <Text style={cellStyle(item, 22)}>
               {item ? textShow(item) : ''}
             </Text>
           </View>
         )}
-        keyExtractor={(item, index) => 'key' + index.toString()}
+        keyExtractor={(_item, index) => 'key' + index.toString()}
       />
-    </View>
+    </SafeAreaView>
   );
-}
-
-async function delay(ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-function setTimeoutPromise(callback: () => void, ms: number) {
-  return new Promise(resolve => setTimeout(resolve, ms)).then(callback);
-}
-
-function textShow(item: ShipsAndOpponentsShot) {
-  switch (item.opponentShotState) {
-    case ShotState.Hit:
-      return 'X';
-    case ShotState.Miss:
-      return '.';
-    case ShotState.Undefine:
-      return '';
-  }
 }
 
 function cellStyle(item: ShipsAndOpponentsShot, cellSize: number) {
@@ -159,7 +140,36 @@ function cellStyle(item: ShipsAndOpponentsShot, cellSize: number) {
   };
 }
 
+function textShow(item: ShipsAndOpponentsShot) {
+  switch (item.opponentShotState) {
+    case ShotState.Hit:
+      return 'X';
+    case ShotState.Miss:
+      return '.';
+    case ShotState.Undefine:
+      return '';
+  }
+}
+
 const styles = StyleSheet.create({
+  container: {
+    marginVertical: 20,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  titleText: {
+    marginVertical: 5,
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+  },
+  boardMessage: {
+    marginVertical: 10,
+    fontSize: 20,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    color: 'green',
+  },
   grid: {
     marginTop: 20,
   },
@@ -173,19 +183,3 @@ const styles = StyleSheet.create({
   },
 });
 export default App;
-
-export function getShipColorByName(name: string): string {
-  switch (name) {
-    case ShipName.Carrier:
-      return 'green';
-    case ShipName.Battleship:
-      return 'orange';
-    case ShipName.Cruiser:
-      return 'yellow';
-    case ShipName.Submarine:
-      return 'blue';
-    case ShipName.Destroyer:
-      return 'pink';
-  }
-  return '';
-}

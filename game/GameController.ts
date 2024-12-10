@@ -1,7 +1,7 @@
 import {getRandomNumber} from '../utils/Helper';
-import {ShipsAndOpponentsShot, Shot, ShotState} from './Model';
-import {Player} from './Player';
-import {ResultChecker} from './ResultChecker';
+import {ShipsAndOpponentsShot, Shot, ShotState} from '../player/Models';
+import {Player} from '../player/Player';
+import {ResultChecker} from '../player/ResultChecker';
 
 export class GameController {
   public playerA: Player = new Player();
@@ -53,6 +53,8 @@ export class GameController {
   } {
     const shotCellNumber = this.playerB.announceShot();
     const shotStatus = this.playerA.opponentShottedStatus(shotCellNumber);
+
+    this.getPlayerBScore(shotStatus);
 
     this.playerB.announcedShots[shotCellNumber - 1] = {
       position: shotCellNumber - 1,
