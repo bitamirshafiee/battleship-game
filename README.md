@@ -27,6 +27,8 @@ Things I would like to do:
 
 - Creating a separate screen for game view, put it in the game package, use the controller for this view instead of using the controller for **App.tsx** and add a stack navigator.
 - Use a factory pattern to create the controller at startup in **App.tsx**
+- Make UI code modularize, by making list of the board a view component and also the list item a separate function.
+- Instead of using cross and dot for showing miss or hit, use a well formatted image.
 - Right now the ships are just positioning horizontally, I have conmmented in the **Player** file that it can be vertically too. The logic will be randomly select to position the ships vertically or horizontally and then positioning them. for the sake of vertical positioning, we choose a random number and select a cell whether on top or below of the selected cell(it should be a multiply of 10).
 - We can make the players smarter, after choosing a random number from 1 to 100 to attack, we can check if it is a hit or not, if it is a hit we can write a code to start hiting around the hitted cell.
 - Tests has been written for some functions, and there could be more tests be written for forexample the result checker or UI.
